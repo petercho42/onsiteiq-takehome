@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+
+  web:
+    build: .
+    command: bash -c "python manage.py migrate && python manage.py migrate auth && python manage.py migrate authtoken && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ats
+      POSTGRES_USER: petercho
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
