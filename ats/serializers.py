@@ -3,6 +3,14 @@ from rest_framework import serializers
 from ats.models import Job, User, Applicant, Application, ApplicationNote
 
 
+class ApplicationStatsSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField()
+    total_applications = serializers.IntegerField()
+    approved_applications = serializers.IntegerField()
+    rejected_applications = serializers.IntegerField()
+
+
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job

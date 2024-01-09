@@ -4,6 +4,7 @@ from ats.views import (
     ApplicationCreateListView,
     ApplicationApprovalView,
     ApplicationNoteCreateView,
+    JobApplicationStatsAPIView,
 )
 
 
@@ -22,5 +23,10 @@ urlpatterns = [
         "applications/<int:pk>/notes/",
         ApplicationNoteCreateView.as_view(),
         name="applicationnote-create",
+    ),
+    path(
+        "applications/stats/",
+        JobApplicationStatsAPIView.as_view(),
+        name="application-stats",
     ),
 ]

@@ -36,10 +36,6 @@ pip-delete-this-directory.txt
 .vscode/
 .idea/
 
-# Ignore migrations, as they are usually not required in version control
-**/migrations/*.py
-**/migrations/*.pyc
-
 # Ignore local development settings
 settings_local.py
 

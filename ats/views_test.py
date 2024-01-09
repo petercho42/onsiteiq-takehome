@@ -169,3 +169,51 @@ def test_application_note_create_view(
     response = api_client.get(url)
     assert response.status_code == status.HTTP_403_FORBIDDEN
     assert len(response.data) == 1
+
+
+def test_application_stats(api_client, user, application):
+    api_client.force_authenticate(user=user)
+
+    stats_url = reverse("application-stats")
+    response = api_client.get(stats_url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data) == 1
+    assert response.data[0]["title"] == "Test Job"
+    assert response.data[0]["total_applications"] == 1
+    assert response.data[0]["approved_applications"] == 0
+    assert response.data[0]["rejected_applications"] == 0
+
+    approval_url = reverse("application-approval", kwargs={"pk": application.id})
+
+    # Test approval
+    response = api_client.patch(
+        approval_url, {"status": Application.Status.APPROVED}, format="json"
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data == {"Success": "Application status updated successfully."}
+
+    # Test Stat
+    response = api_client.get(stats_url)
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data) == 1
+    assert response.data[0]["title"] == "Test Job"
+    assert response.data[0]["total_applications"] == 1
+    assert response.data[0]["approved_applications"] == 1
+    assert response.data[0]["rejected_applications"] == 0
+
+    # Test rejection
+    response = api_client.patch(
+        approval_url, {"status": Application.Status.REJECTED}, format="json"
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data == {"Success": "Application status updated successfully."}
+
+    # Test Stat
+    response = api_client.get(stats_url)
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data) == 1
+    assert response.data[0]["title"] == "Test Job"
+    assert response.data[0]["total_applications"] == 1
+    assert response.data[0]["approved_applications"] == 0
+    assert response.data[0]["rejected_applications"] == 1
